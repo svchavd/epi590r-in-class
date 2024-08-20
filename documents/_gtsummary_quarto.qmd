@@ -3,6 +3,11 @@ title: "gtsummary in quarto"
 format: html
 ---
 
+The NLSY79 Cohort is a longitudinal project that follows the lives of a sample 
+of American youth born between 1957-64. The cohort originally included 12,686 
+respondents ages 14-22 when first interviewed in 1979; after two subsamples were
+dropped, 9,964 respondents remain in the eligible samples.
+
 ```{r}
 #| warning: false
 #| message: false
@@ -22,21 +27,21 @@ nlsy <- read_csv(here::here("data", "raw", "nlsy.csv"),
 ```
 
 ```{r}
-"The NLSY79 Cohort is a longitudinal project that follows the lives of a sample 
-of American youth born between 1957-64. The cohort originally included 12,686 
-respondents ages 14-22 when first interviewed in 1979; after two subsamples were
-dropped, 9,964 respondents remain in the eligible samples."
+mean_sleep <- mean(nlsy$sleep_wknd, na.rm=TRUE)
 ```
+The mean hours of sleep on weekends was `r mean_sleep` hours.
 
+The median hours of sleep on weekends was `r median(nlsy$sleep_wknd, na.rm=TRUE)` hours.
 ```{r}
-#| error: true
+#| label: tbl-one
+#| tbl-cap: Descriptive statistics
 tbl_summary(
   nlsy,
   by = sex_cat,
   include = c(sex_cat, race_eth_cat, region_cat,
               eyesight_cat, glasses, age_bir))
 ```
-
+@tbl-one contains descriptive statistics for the study population.
 # Customization of `tbl_summary()`
 
 ```{r}
@@ -62,3 +67,23 @@ tbl_summary(
   ),
   missing_text = "Missing")
 ```
+
+``` {r}
+#| label: tbl-descr
+#| tbl-cap: "Descriptive statistics"
+#| output-location: slide
+table1 <- tbl_summary(
+  nlsy,
+  by = sex_cat,
+  include = c(sex_cat, race_eth_cat, region_cat,
+              eyesight_cat, glasses, sleep_wknd)) |> 
+  add_overall(last = TRUE)
+table1
+```
+
+```{r}
+inline_text(table1, variable="sleep_wknd", column="stat_1")
+```
+
+
+
